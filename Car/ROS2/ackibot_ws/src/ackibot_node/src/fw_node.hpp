@@ -19,6 +19,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
+//NOVO
+#include "std_msgs/msg/float32_multi_array.hpp"
+
 #include <libserial/SerialPort.h>
 
 #include "fw_pkgs.hpp"
@@ -86,5 +89,9 @@ private:
 	i32 prev_enc;
 	//i32 prev_enc[2];
 	rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state__pub;
+
+	///NOVO
+	rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr ultrasound_pub;
+	std::vector<float> ultrasound_distances;
 
 };

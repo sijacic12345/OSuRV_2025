@@ -55,6 +55,14 @@ DEBUG(sizeof(pkg_s2m_t));
 		rclcpp::QoS(rclcpp::KeepLast(10))
 	);
 
+	//NOVO
+	ultrasound_pub = this->create_publisher<std_msgs::msg::Float32MultiArray>(
+        "ultrasound",
+        10
+    );
+	//za sada jedan sennzor
+	ultrasound_distances.resize(1, 100.0f); // Početna vrednost 1 metar (bezbedno)
+
 	//objavljuje parametar cvora
 	this->declare_parameter<float>("motors.enc_tick_per_rev");
 
@@ -394,5 +402,28 @@ void FW_Node::read_pkg() {
 
 
 	joint_state__pub->publish(std::move(msg));
+
+	//NOVO
+	// OBRADA ULTRAZVUČNOG SENZORA
+    
+    // Konverzija: mikrosekunde (uint32) -> centimetri (float)
+    // Formula: (vreme * brzina_zvuka) / 2
+    float dist = static_cast<float>(p.payload.ultrasound_pulse) * 0.0343f / 2.0f;
+	//Prednji senzor
+    ultrasound_distances[0] = dist;
+
+    // Slanje podatka na ROS topik ?
+    auto message = std_msgs::msg::Float32MultiArray();
+    message.data = ultrasound_distances; // Kopira ceo vektor u poruku
+    ultrasound_pub->publish(message);
+
+    // EMERGENCY STOP LOGIKA
+    // Ako je prepreka bliža od 10cm (a nije 0, što može biti greška senzora)
+    if (ultrasound_distances[0] > 0.1f && ultrasound_distances[0] < 10.0f) {
+        RCLCPP_WARN(this->get_logger(), "Emergency Stop! Distance: %.2f cm", ultrasound_distances[0]);
+        this->speed = 0;
+		//Dodati logiku da mozemo da idemo u rikverc da se udaljimo od prepreke
+        write_pkg();
+    }
 }
 
