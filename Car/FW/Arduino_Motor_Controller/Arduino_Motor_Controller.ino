@@ -20,6 +20,11 @@
 //#define CFG_2 6
 //#define CFG_3 7
 
+///////////////////////////////////////////////////////////////////////////////
+//NOVO
+const int trigPin= A3;
+const int echoPin= 9;
+///////////////////////////////////////////////////////////////////////////////
 
 // L298 settings.
 #define SLOW_RAMP_RATE 250
@@ -510,10 +515,30 @@ ISR(PCINT1_vect) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+//NOVO
+float getDistanceCM() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  float duration = pulseIn(echoPin, HIGH);
+  float distance = duration * 0.0343 / 2; // distance in CM
+  return distance;
+}
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
 
 void setup() {
 
- 
+  ///////////////////////////////////////////////////////////////////////////////
+  //NOVO
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  ///////////////////////////////////////////////////////////////////////////////
+
   servo.attach(M1_PWM); // pin 8 za servo
 
   Serial.begin(115200);
@@ -778,6 +803,10 @@ void send_pkg() {
   // treba nam niz za rezultata ultrazvucnog senzora
  // p.payload.cfg = read_cfg();
 
+  ///////////////////////////////////////////////////////////////////////////////
+  //NOVO
+  p.payload.ultrasound_distance = getDistanceCM();
+  ///////////////////////////////////////////////////////////////////////////////
   p.crc = CRC16().add(p.payload).get_crc();
 
   // Upisuje paket
@@ -802,10 +831,21 @@ void loop() {
 
   
   poll_pkg();
-
-
   print_status_if_changed();
   
+  ///////////////////////////////////////////////////////////////////////////////
+  //NOVO
+  float distance = getDistanceCM();
+  //Serial.print("Ultrasonic distance: ");
+  //Serial.println(distance);
+
+  if (distance > 0 && distance < 10) {   // STOPS at 10 cm
+    set_target_speed(0);                 // stop BLDC
+    set_target_steering_angle(90);       // center steering
+    //Serial.println("Obstacle detected — STOP");
+  }
+  ///////////////////////////////////////////////////////////////////////////////
+
   // Send slower than reading.
   static ms_t t_prev;
   ms_t t_curr = millis();

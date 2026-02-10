@@ -19,6 +19,7 @@ struct_packed pkg_m2s_t {
 		i16 speed;
         i16 steering_angle;
 		//u16 ramp_rate_ms;
+		//master 2 slave we dont need distance
 	} payload;
 	pkg_crc_t crc;
 };
@@ -32,6 +33,7 @@ struct_packed pkg_s2m_t {
         i16 steering_angle_i;
         i16 steering_angle_o;
 		//u8 cfg;
+		float ultrasound_distance; //NOVO! Distance in cm (float?)
 	} payload;
 	pkg_crc_t crc;
 };
