@@ -92,6 +92,7 @@ colcon build
 ```
 
 3. Run ROS2 nodes (two terminals)
+
 Terminal 1 - Twist to Ackermann bridge
 ```bash
 source /opt/ros/jazzy/setup.bash
@@ -104,7 +105,7 @@ source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 ros2 run wc_main simple_ackermann_steering_controller
 ```
-4. Run this faster (one terminal)
+4. Run step 3 faster (one terminal)
 ```bash
 chmod +x run_pi.sh
 ./run_pi.sh
@@ -133,7 +134,7 @@ Reverse speed is limited to S_MEDIUM
 source /opt/ros/jazzy/setup.bash
 ros2 run joy joy_node
 ```
-2. Start joystick -> Twist node
+2. Start joystick ---> Twist node
 ```bash
 ros2 run teleop_twist_joy teleop_node \
   --ros-args --params-file ~/path_to_this_file/teleop_twist_joy.yaml
