@@ -25,15 +25,15 @@
 		- Ultrasound FW:
 			FW/KompletnoBLDCiServo/KompletnoBLDCiServo.ino
 	- Send distance measurement from Arduino to RPi
-		- 3 numbers of pulseIn result as integer ? dodati kasnije
+		- 3 numbers of pulseIn result as integer ? dodati kasnije trenutno samo prednji ima svrhu
 		+ fw_pkgs.hpp
-		- Arduino_Motor_Controller.ino
+		+ Arduino_Motor_Controller.ino
 	+ Calculate distance
 		- ackibot_ws/src/ackibot_node/src/fw_node.cpp
-	- Publish /ultrasound Float32[]
+	+ Publish /ultrasound Float32[]
 		- ackibot_ws/src/ackibot_node/src/fw_node.cpp
 		- ros2 topic echo /ultrasound
 	- node for stopping
 		- subscribuje /ultrasound
-	- node for parking sensor
+	- node for parking sensor (Nemamo)
 		- node for beeping
